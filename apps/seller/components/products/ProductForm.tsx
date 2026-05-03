@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { Button, Input, Textarea, Select, ExpiryPicker } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import { ImageUploader } from "./ImageUploader";
 import { DiscountSelector } from "./DiscountSelector";
 import { CategorySelector } from "./CategorySelector";
@@ -31,6 +32,7 @@ export function ProductForm({ defaultValues, productId }: { defaultValues?: Part
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedMasterId, setSelectedMasterId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const suggestionRef = useRef<HTMLDivElement>(null);
   const { data: suggestions = [] } = useSuggestionSearch(searchQuery, "master");
 
@@ -81,6 +83,31 @@ export function ProductForm({ defaultValues, productId }: { defaultValues?: Part
       lastMrpRef.current = watchMrp;
     }
   }, [watchMrp, setValue, watchStock]);
+
+  // Reset active index when suggestions change
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [suggestions]);
+
+  // Handle keyboard navigation for suggestions
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === "Enter") {
+      if (activeIndex >= 0) {
+        e.preventDefault();
+        handleSuggestionSelect(suggestions[activeIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -272,15 +299,19 @@ export function ProductForm({ defaultValues, productId }: { defaultValues?: Part
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setShowSuggestions(true); }}
                 onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
+                onKeyDown={handleKeyDown}
                 leftIcon={<Search className="h-4 w-4" />}
               />
               {showSuggestions && suggestions.length > 0 && (
                 <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-background border border-primary/20 rounded-xl shadow-2xl max-h-64 overflow-y-auto backdrop-blur-xl">
-                  {suggestions.map((s: Suggestion) => (
+                  {suggestions.map((s: Suggestion, index: number) => (
                     <button
                       key={s.id}
                       type="button"
-                      className="w-full text-left px-4 py-3 hover:bg-primary/10 transition-colors border-b border-border/30 last:border-0 group"
+                      className={cn(
+                        "w-full text-left px-4 py-3 transition-colors border-b border-border/30 last:border-0 group",
+                        activeIndex === index ? "bg-primary/20" : "hover:bg-primary/10"
+                      )}
                       onClick={() => handleSuggestionSelect(s)}
                     >
                       <div className="flex items-center justify-between">

@@ -92,6 +92,7 @@ export default function AdminDashboardPage() {
                   <p className="text-xs text-red-500">Support tickets need attention</p>
                 </div>
               </div>
+              <Link href="/tickets"><Button size="xs" variant="danger">Review</Button></Link>
             </motion.div>
           )}
         </div>
@@ -99,7 +100,7 @@ export default function AdminDashboardPage() {
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard title="Total Users" value={formatCompact(stats.totalUsers)} change={`${stats.totalBuyers} buyers · ${stats.totalSellers} sellers`} icon={Users} iconClass="bg-blue-50 text-blue-600 dark:bg-blue-900/20 href=/users" delay={0} href="/users" />
+        <StatCard title="Total Users" value={formatCompact(stats.totalUsers)} change={`${stats.totalBuyers} buyers · ${stats.totalSellers} sellers`} icon={Users} iconClass="bg-blue-50 text-blue-600 dark:bg-blue-900/20" delay={0} href="/users" />
         <StatCard title="Total Sellers" value={String(stats.totalSellers)} change={`${stats.blockedUsers} blocked`} icon={CheckCircle} iconClass="bg-green-50 text-green-600 dark:bg-green-900/20" delay={0.07} href="/users" />
         <StatCard title="Total Orders" value={formatCompact(stats.totalOrders)} change={`${stats.pendingOrders} pending`} icon={ShoppingBag} iconClass="bg-purple-50 text-purple-600 dark:bg-purple-900/20" delay={0.14} href="/orders" />
         <StatCard title="Platform Revenue" value={`₹${formatCompact(stats.totalRevenue)}`} change={`${stats.pendingPayments} pending payments`} icon={TrendingUp} iconClass="bg-orange-50 text-orange-600 dark:bg-orange-900/20" delay={0.21} href="/settlements" />
@@ -128,7 +129,7 @@ export default function AdminDashboardPage() {
           <table className="w-full" aria-label="Platform orders">
             <thead>
               <tr className="border-b border-border/50 bg-muted/20">
-                {["Order ID", "Buyer Phone", "Amount", "Payment", "Date"].map(h => (
+                {["Order ID", "Buyer", "Amount", "Payment", "Date"].map(h => (
                   <th key={h} scope="col" className="px-5 py-3.5 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -146,7 +147,10 @@ export default function AdminDashboardPage() {
                   onClick={() => router.push(`/orders/${o.id}`)}
                 >
                   <td className="px-5 py-4"><span className="font-mono text-xs font-medium text-foreground group-hover:text-primary transition-colors">{o.id?.slice(0, 8)}…</span></td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground">{o.buyer?.phone ?? "—"}</td>
+                  <td className="px-5 py-4">
+                    <p className="text-sm font-medium text-foreground truncate">{o.buyer?.name ?? o.buyer?.legalName ?? "—"}</p>
+                    <p className="text-xs text-muted-foreground">{o.buyer?.phone ?? ""}</p>
+                  </td>
                   <td className="px-5 py-4 text-sm font-semibold text-foreground">{formatCurrency(o.totalAmount ?? 0)}</td>
                   <td className="px-5 py-4"><Badge variant={o.paymentStatus === "PAID" ? "success" : o.paymentStatus === "PENDING" ? "warning" : "error"}>{o.paymentStatus ?? "—"}</Badge></td>
                   <td className="px-5 py-4 text-xs text-muted-foreground whitespace-nowrap">{o.createdAt ? new Date(o.createdAt).toLocaleDateString("en-IN") : "—"}</td>

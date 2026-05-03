@@ -41,7 +41,7 @@ function ProductsPageContent() {
   const [quickViewQty, setQuickViewQty] = useState(1);
   const [pendingCartProducts, setPendingCartProducts] = useState<Set<string>>(new Set());
   const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [sortOption, setSortOption] = useState<string>('default');
+  const [sortOption, setSortOption] = useState<string>('newest');
   const [filterNewItems, setFilterNewItems] = useState(false);
   const [filterBestSelling, setFilterBestSelling] = useState(false);
   const [filterDiscountItems, setFilterDiscountItems] = useState(false);
@@ -161,17 +161,7 @@ function ProductsPageContent() {
     return mrp || p.price || p.ptr || 0;
   };
 
-  if (sortOption === 'price_low_high') {
-    products = [...products].sort((a: any, b: any) => getSortablePrice(a) - getSortablePrice(b));
-  } else if (sortOption === 'price_high_low') {
-    products = [...products].sort((a: any, b: any) => getSortablePrice(b) - getSortablePrice(a));
-  } else if (sortOption === 'newest') {
-    products = [...products].sort((a: any, b: any) => {
-      const timeA = new Date(a.updatedAt || a.createdAt || 0).getTime();
-      const timeB = new Date(b.updatedAt || b.createdAt || 0).getTime();
-      return timeB - timeA;
-    });
-  }
+
 
   return (
     <main className="min-h-screen bg-[#f2fcf6] relative flex flex-col">
@@ -211,11 +201,6 @@ function ProductsPageContent() {
                     const val = e.target.value;
                     setSortOption(val); 
                     setPage(1); 
-                    if (val === 'newest') {
-                      setFilterNewItems(true);
-                    } else {
-                      setFilterNewItems(false);
-                    }
                   }}
                   className="appearance-none w-full bg-gray-50/50 border border-gray-100 rounded-lg p-3 text-xs text-gray-700 font-bold focus:ring-1 focus:ring-emerald-400 outline-none cursor-pointer"
                 >
@@ -593,8 +578,6 @@ function ProductsPageContent() {
                       const val = e.target.value;
                       setSortOption(val); 
                       setPage(1); 
-                      if (val === 'newest') setFilterNewItems(true);
-                      else setFilterNewItems(false);
                     }}
                     className="appearance-none w-full bg-gray-50/50 border border-gray-100 rounded-lg p-3 text-xs text-gray-700 font-bold focus:ring-1 focus:ring-emerald-400 outline-none cursor-pointer"
                   >

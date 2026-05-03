@@ -2,19 +2,12 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Phone, Mail, Building2, FileText, MapPin, Calendar, ShieldCheck, Edit, Trash2, Ban, Unlock, UserCheck, UserX, ExternalLink, Image } from "lucide-react";
+import { ArrowLeft, Phone, Mail, Building2, FileText, MapPin, Calendar, Trash2, Ban, Unlock, UserCheck, UserX, ExternalLink } from "lucide-react";
 import { AdminLayout } from "@/components/layout/admin-layout";
-import { Button, Badge, Input, Modal, Skeleton } from "@/components/ui";
+import { Button, Badge, Modal, Skeleton } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useUserById, useAffirmUserStatus, useDeleteUser, useUpdateUserStatus, usePresignedUrl } from "@/hooks/useAdmin";
+import { useUserById, useAffirmUserStatus, useDeleteUser, usePresignedUrl } from "@/hooks/useAdmin";
 import toast from "react-hot-toast";
-
-const STATUS_LEVELS = [
-  { level: 0, label: "Pending", desc: "New registration, cannot order", color: "warning" as const },
-  { level: 1, label: "Approved", desc: "Can place orders with advance payment", color: "success" as const },
-  { level: 2, label: "EMI Enabled", desc: "Can place milestone/EMI orders", color: "info" as const },
-  { level: 3, label: "Full Credit", desc: "30-day credit line enabled", color: "purple" as const },
-];
 
 const getFullUrl = (url: string) => {
   if (!url) return "";
@@ -69,7 +62,6 @@ export default function UserDetailPage() {
   const { data: user, isLoading } = useUserById(id);
   const updateStatus = useAffirmUserStatus();
   const deleteUserMutation = useDeleteUser();
-  const updateStatusLevel = useUpdateUserStatus();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleAction = async (action: "approve" | "reject" | "block" | "unblock") => {
@@ -88,15 +80,6 @@ export default function UserDetailPage() {
       router.push("/users");
     } catch {
       toast.error("Failed to delete user");
-    }
-  };
-
-  const handleStatusLevel = async (level: number) => {
-    try {
-      await updateStatusLevel.mutateAsync({ userId: id, statusLevel: level });
-      toast.success(`Status updated to level ${level}`);
-    } catch {
-      toast.error("Failed to update status level");
     }
   };
 
@@ -246,31 +229,6 @@ export default function UserDetailPage() {
           </motion.div>
         </div>
 
-        {/* Status Level Management (for Buyers) */}
-        {(isBuyer || isSeller) && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-2xl p-6">
-            <h2 className="font-semibold text-foreground mb-4">Trust / Status Level</h2>
-            <p className="text-sm text-muted-foreground mb-4">Controls what payment methods and credit lines this user can access.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {STATUS_LEVELS.map(({ level, label, desc, color }) => {
-                const current = user.statusLevel === level;
-                return (
-                  <button key={level} onClick={() => handleStatusLevel(level)}
-                    className={cn("p-4 rounded-xl border-2 text-left transition-all",
-                      current ? "border-primary bg-primary/5" : "border-border hover:border-primary/50")}>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant={color}>{label}</Badge>
-                      <span className="text-xs font-mono text-muted-foreground">Lv.{level}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{desc}</p>
-                    {current && <p className="text-xs font-semibold text-primary mt-2">✓ Current Level</p>}
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        )}
-
         {/* KYC Documents - Seller */}
         {isSeller && sp && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-2xl p-6">
@@ -284,32 +242,6 @@ export default function UserDetailPage() {
               <div className="mt-6 pt-6 border-t border-border flex gap-3">
                 <Button variant="primary" onClick={() => handleAction("approve")} leftIcon={<UserCheck className="h-4 w-4" />}>Approve Seller</Button>
                 <Button variant="danger" onClick={() => handleAction("reject")} leftIcon={<UserX className="h-4 w-4" />}>Reject Seller</Button>
-              </div>
-            )}
-          </motion.div>
-        )}
-
-        {/* KYC Documents - Buyer */}
-        {isBuyer && bp && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-2xl p-6">
-            <h2 className="font-semibold text-foreground mb-4">Buyer Verification</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <KycCard label="GST Verification" status={bp.verificationStatus === "VERIFIED" ? "verified" : "pending"} value={bp.gstNumber} />
-              <KycCard label="PAN" status={bp.panNumber ? "verified" : "pending"} value={bp.panNumber} />
-              <KycCard label="Drug License" status={bp.drugLicenseNumber ? "verified" : "pending"} value={bp.drugLicenseNumber} />
-            </div>
-            {(bp.gstPanResponse || user.gstPanResponse) && (
-              <div className="mt-4">
-                <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">IDFY Verification Response</p>
-                <pre className="p-4 bg-muted/20 border border-border rounded-xl text-xs font-mono overflow-auto max-h-48">
-                  {JSON.stringify(bp.gstPanResponse ?? user.gstPanResponse, null, 2)}
-                </pre>
-              </div>
-            )}
-            {canApprove && (
-              <div className="mt-6 pt-6 border-t border-border flex gap-3">
-                <Button variant="primary" onClick={() => handleAction("approve")} leftIcon={<UserCheck className="h-4 w-4" />}>Approve Buyer</Button>
-                <Button variant="danger" onClick={() => handleAction("reject")} leftIcon={<UserX className="h-4 w-4" />}>Reject Buyer</Button>
               </div>
             )}
           </motion.div>

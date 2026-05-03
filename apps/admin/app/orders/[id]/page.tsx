@@ -205,7 +205,7 @@ export default function OrderDetailPage() {
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">{order.buyer?.name ?? order.buyer?.businessName ?? "—"}</span>
+                  <span className="text-sm text-foreground">{order.buyer?.name ?? order.buyer?.legalName ?? order.buyer?.businessName ?? order.buyer?.buyerProfile?.name ?? order.buyer?.buyerProfile?.legalName ?? "—"}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-muted-foreground" />

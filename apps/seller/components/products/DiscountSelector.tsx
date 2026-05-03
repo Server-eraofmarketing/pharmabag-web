@@ -87,7 +87,7 @@ export function DiscountSelector({ value, onChange, mrp, gstPercent, error }: Pr
         )}
 
         {showBonus && (
-          <>
+          <div className="grid grid-cols-2 gap-4 sm:col-span-2">
             <Input
               label="Buy Quantity"
               type="number"
@@ -106,7 +106,7 @@ export function DiscountSelector({ value, onChange, mrp, gstPercent, error }: Pr
               onChange={(e) => onChange({ ...value, get: e.target.value ? Number(e.target.value) : undefined })}
               placeholder="e.g 2"
             />
-          </>
+          </div>
         )}
 
         {showBonusName && (

@@ -117,7 +117,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                       </div>
                       <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Composition</p>
-                        <p className="text-[14px] font-[700] text-gray-700 truncate">{displayProduct.chemicalComposition || 'N/A'}</p>
+                        <p className="text-[14px] font-[700] text-gray-700 break-words">{displayProduct.chemicalComposition || 'N/A'}</p>
                       </div>
                       <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Base MRP</p>
@@ -175,7 +175,6 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                             
                             <div className="flex flex-col">
                               <span className="text-[18px] font-black text-gray-900 leading-none">₹{listing.price?.toLocaleString('en-IN')}</span>
-                              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tight mt-1">{listing.seller?.companyName || 'Verified Pharma'}</span>
                             </div>
 
                             {/* Stock Indicator */}

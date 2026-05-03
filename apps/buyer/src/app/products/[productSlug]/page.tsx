@@ -337,7 +337,7 @@ export default function ProductDetailPage({ params }: { params: { productSlug: s
                   {/* Chemical Composition */}
                   <div className="space-y-2">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Chemical Composition</p>
-                    <p className="text-[16px] font-[900] text-gray-700 leading-tight italic">
+                    <p className="text-[16px] font-[900] text-gray-700 leading-tight italic break-words">
                       {product.chemicalComposition || 'N/A'}
                     </p>
                   </div>
@@ -424,7 +424,6 @@ export default function ProductDetailPage({ params }: { params: { productSlug: s
                       {/* 3. NET PRICE */}
                       <div className="lg:col-span-2 flex flex-col items-center">
                         <p className="text-[12px] sm:text-[22px] font-black text-gray-900 leading-none">₹{l.price?.toLocaleString('en-IN')}</p>
-                        <p className="hidden sm:block text-[9px] font-bold text-gray-400 mt-1 uppercase truncate max-w-full px-2">{l.seller?.companyName || 'Verified Seller'}</p>
                       </div>
 
                       {/* 4. EXPIRY */}
