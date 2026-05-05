@@ -113,11 +113,12 @@ export default function AdminDashboardPage() {
       )}
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <StatCard title="Total Users" value={formatCompact(stats.totalUsers)} change={`${stats.totalBuyers} buyers · ${stats.totalSellers} sellers`} icon={Users} iconClass="bg-blue-50 text-blue-600 dark:bg-blue-900/20" delay={0} href="/users" />
-        <StatCard title="Total Sellers" value={String(stats.totalSellers)} change={`${stats.blockedUsers} blocked`} icon={CheckCircle} iconClass="bg-green-50 text-green-600 dark:bg-green-900/20" delay={0.07} href="/users" />
-        <StatCard title="Total Orders" value={formatCompact(stats.totalOrders)} change={`${stats.pendingOrders} pending`} icon={ShoppingBag} iconClass="bg-purple-50 text-purple-600 dark:bg-purple-900/20" delay={0.14} href="/orders" />
-        <StatCard title="Platform Revenue" value={`₹${formatCompact(stats.totalRevenue)}`} change={`${stats.pendingPayments} pending payments`} icon={TrendingUp} iconClass="bg-orange-50 text-orange-600 dark:bg-orange-900/20" delay={0.21} href="/settlements" />
+        <StatCard title="Total Buyers" value={String(stats.totalBuyers)} change="Verified buyers" icon={Users} iconClass="bg-cyan-50 text-cyan-600 dark:bg-cyan-900/20" delay={0.05} href="/users" />
+        <StatCard title="Total Sellers" value={String(stats.totalSellers)} change={`${stats.blockedUsers} blocked`} icon={CheckCircle} iconClass="bg-green-50 text-green-600 dark:bg-green-900/20" delay={0.1} href="/users" />
+        <StatCard title="Total Orders" value={formatCompact(stats.totalOrders)} change={`${stats.pendingOrders} pending`} icon={ShoppingBag} iconClass="bg-purple-50 text-purple-600 dark:bg-purple-900/20" delay={0.15} href="/orders" />
+        <StatCard title="Platform Revenue" value={`₹${formatCompact(stats.totalRevenue)}`} change={`${stats.pendingPayments} pending payments`} icon={TrendingUp} iconClass="bg-orange-50 text-orange-600 dark:bg-orange-900/20" delay={0.2} href="/settlements" />
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

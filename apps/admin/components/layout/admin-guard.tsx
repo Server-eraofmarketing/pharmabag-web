@@ -13,6 +13,15 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/payments": "7",
   "/settlements": "9",
   "/tickets": "b",
+  "/suggestions": "d",
+  "/product-requests": "f",
+  "/marketing": "h",
+  "/banners": "v",
+  "/notifications": "j",
+  "/referrals": "l",
+  "/custom-orders": "n",
+  "/analytics": "p",
+  "/settings": "r",
   "/admins": "x",
 };
 
