@@ -88,9 +88,6 @@ export function setBaseURL(url: string) {
 const api: AxiosInstance = axios.create({
   baseURL: getBaseURL(),
   timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
   withCredentials: true,
 });
 

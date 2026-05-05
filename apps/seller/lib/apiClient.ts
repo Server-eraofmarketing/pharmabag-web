@@ -7,7 +7,6 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 export const apiClient = axios.create({
   baseURL: BASE_URL,
   timeout: 30_000,
-  headers: { "Content-Type": "application/json" },
 });
 
 apiClient.interceptors.request.use((config: any) => {
