@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Package, Truck, CheckCircle, XCircle, Clock, CreditCard, FileText, User, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, Package, Truck, CheckCircle, XCircle, Clock, CreditCard, FileText, User, MapPin, Phone, Building2, Mail, ExternalLink } from "lucide-react";
+
+
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button, Badge, Modal, Input, Skeleton } from "@/components/ui";
 import { formatCurrency } from "@pharmabag/utils";
@@ -202,23 +204,157 @@ export default function OrderDetailPage() {
             {/* Buyer Info */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="glass-card rounded-2xl p-6">
               <h2 className="font-semibold text-foreground mb-4">Buyer</h2>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">{order.buyer?.name ?? order.buyer?.legalName ?? order.buyer?.businessName ?? order.buyer?.buyerProfile?.name ?? order.buyer?.buyerProfile?.legalName ?? "—"}</span>
+              <div className="space-y-4">
+                {/* Business Details */}
+                <div className="pb-3 border-b border-border/30">
+                  <div className="flex items-start gap-2 mb-2">
+                    <Building2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-foreground truncate">{order.buyer?.buyerProfile?.legalName ?? order.buyer?.name ?? "—"}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest mt-0.5">Legal Business Name</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {order.buyer?.buyerProfile?.gstNumber && (
+                      <div className="bg-accent/30 rounded-lg p-2">
+                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">GST</p>
+                        <p className="text-xs font-mono font-bold text-foreground">{order.buyer.buyerProfile.gstNumber}</p>
+                      </div>
+                    )}
+                    {order.buyer?.buyerProfile?.panNumber && (
+                      <div className="bg-accent/30 rounded-lg p-2">
+                        <p className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider mb-0.5">PAN</p>
+                        <p className="text-xs font-mono font-bold text-foreground">{order.buyer.buyerProfile.panNumber}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-mono text-foreground">{order.buyer?.phone ?? "—"}</span>
+
+                {/* Contact Info */}
+                <div className="pb-3 border-b border-border/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-sm font-medium text-foreground">{order.buyer?.phone ?? "—"}</span>
+                  </div>
+                  {order.buyer?.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <span className="text-sm font-medium text-foreground truncate">{order.buyer.email}</span>
+                    </div>
+                  )}
                 </div>
-                {order.shippingAddress && (
-                  <div className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <span className="text-sm text-muted-foreground">{typeof order.shippingAddress === "string" ? order.shippingAddress : [order.shippingAddress.address, order.shippingAddress.city, order.shippingAddress.state, order.shippingAddress.pincode].filter(Boolean).join(", ")}</span>
+
+                {/* Drug Licenses */}
+                {(order.buyer?.buyerProfile?.drugLicenseNumber || order.buyer?.buyerProfile?.drugLicenseNumber2) && (
+                  <div className="pb-3 border-b border-border/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <span className="text-xs font-bold text-foreground">Drug Licenses</span>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      {order.buyer?.buyerProfile?.drugLicenseNumber && (
+                        <div className="flex justify-between items-end gap-2 bg-muted/30 rounded-lg p-2">
+                          <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-bold">License 1 (20B)</p>
+                            <p className="text-xs font-bold text-foreground">{order.buyer.buyerProfile.drugLicenseNumber}</p>
+                          </div>
+                          {order.buyer.buyerProfile.drugLicenseExpiry && (
+                            <div className="text-right">
+                              <p className="text-[8px] text-muted-foreground uppercase font-bold">Expiry</p>
+                              <p className={cn("text-[10px] font-bold", 
+                                new Date(order.buyer.buyerProfile.drugLicenseExpiry) < new Date() ? "text-red-500" : "text-emerald-500"
+                              )}>
+                                {new Date(order.buyer.buyerProfile.drugLicenseExpiry).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      
+                      {order.buyer?.buyerProfile?.drugLicenseNumber2 && (
+                        <div className="flex justify-between items-end gap-2 bg-muted/30 rounded-lg p-2">
+                          <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-bold">License 2 (21B)</p>
+                            <p className="text-xs font-bold text-foreground">{order.buyer.buyerProfile.drugLicenseNumber2}</p>
+                          </div>
+                          {order.buyer.buyerProfile.drugLicenseExpiry2 && (
+                            <div className="text-right">
+                              <p className="text-[8px] text-muted-foreground uppercase font-bold">Expiry</p>
+                              <p className={cn("text-[10px] font-bold", 
+                                new Date(order.buyer.buyerProfile.drugLicenseExpiry2) < new Date() ? "text-red-500" : "text-emerald-500"
+                              )}>
+                                {new Date(order.buyer.buyerProfile.drugLicenseExpiry2).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
+
+                {/* Verification Documents */}
+                {(order.buyer?.buyerProfile?.document || order.buyer?.buyerProfile?.cancelCheck || order.buyer?.buyerProfile?.drugLicenseUrl || order.buyer?.buyerProfile?.drugLicenseUrl2) && (
+                  <div className="pb-3 border-b border-border/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <span className="text-xs font-bold text-foreground">Verification Documents</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {order.buyer?.buyerProfile?.document && (
+                        <a href={order.buyer.buyerProfile.document} target="_blank" rel="noopener noreferrer" 
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-bold text-primary transition-colors">
+                          GST/PAN <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {order.buyer?.buyerProfile?.drugLicenseUrl && (
+                        <a href={order.buyer.buyerProfile.drugLicenseUrl} target="_blank" rel="noopener noreferrer" 
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-bold text-primary transition-colors">
+                          DL 1 <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {order.buyer?.buyerProfile?.drugLicenseUrl2 && (
+                        <a href={order.buyer.buyerProfile.drugLicenseUrl2} target="_blank" rel="noopener noreferrer" 
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-bold text-primary transition-colors">
+                          DL 2 <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                      {order.buyer?.buyerProfile?.cancelCheck && (
+                        <a href={order.buyer.buyerProfile.cancelCheck} target="_blank" rel="noopener noreferrer" 
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-bold text-primary transition-colors">
+                          Cheque <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Shipping Address */}
+                <div className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-1">Shipping Address</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {order.address 
+                        ? [order.address.address, order.address.city, order.address.state, order.address.pincode].filter(Boolean).join(", ")
+                        : [
+                            typeof order.buyer?.buyerProfile?.address === "object" && order.buyer.buyerProfile.address
+                              ? (order.buyer.buyerProfile.address.street1 || order.buyer.buyerProfile.address.address || JSON.stringify(order.buyer.buyerProfile.address))
+                              : order.buyer?.buyerProfile?.address,
+                            order.buyer?.buyerProfile?.city,
+                            order.buyer?.buyerProfile?.state,
+                            order.buyer?.buyerProfile?.pincode
+                          ].filter(Boolean).join(", ") || "—"
+                      }
+                    </p>
+
+                  </div>
+                </div>
               </div>
             </motion.div>
+
 
             {/* Payment Info */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card rounded-2xl p-6">

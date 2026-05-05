@@ -84,6 +84,21 @@ export async function rejectProduct(productId: string, reason?: string) {
   return data.data;
 }
 
+// ─── Product Requests ────────────────────────────────
+export async function getProductRequests(params: { page?: number; limit?: number; status?: string; search?: string; dateFrom?: string; dateTo?: string } = {}) {
+
+
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => { if (v) qs.set(k, String(v)); });
+  const { data } = await apiClient.get<any>(`/products/requests?${qs}`);
+  return data.data;
+}
+
+export async function updateProductRequestStatus(id: string, status: string) {
+  const { data } = await apiClient.patch<{ data: any }>(`/products/requests/${id}/status`, { status });
+  return data.data;
+}
+
 // ─── Orders ──────────────────────────────────────────
 export async function getAdminOrders(page = 1, limit = 50) {
   const { data } = await apiClient.get<any>(`/admin/orders?page=${page}&limit=${limit}`);
@@ -353,9 +368,8 @@ export async function deleteSuggestion(id: string) {
 export async function importSuggestionsCsv(file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  const { data } = await apiClient.post<{ data: any }>("/admin/suggestions/import", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await apiClient.post<{ data: any }>("/admin/suggestions/import", formData);
+
   return data.data;
 }
 
@@ -366,16 +380,14 @@ export async function getBanners() {
 }
 
 export async function createBanner(payload: FormData) {
-  const { data } = await apiClient.post<{ data: any }>("/admin/banners", payload, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await apiClient.post<{ data: any }>("/admin/banners", payload);
+
   return data.data;
 }
 
 export async function updateBanner(id: string, payload: FormData) {
-  const { data } = await apiClient.patch<{ data: any }>(`/admin/banners/${id}`, payload, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await apiClient.patch<{ data: any }>(`/admin/banners/${id}`, payload);
+
   return data.data;
 }
 
@@ -385,13 +397,16 @@ export async function deleteBanner(id: string) {
 }
 
 // ─── Referral Codes ──────────────────────────────────
-export async function getReferralCodes(params: { page?: number; limit?: number } = {}) {
+export async function getReferralCodes(params: { page?: number; limit?: number; dateFrom?: string; dateTo?: string } = {}) {
   const qs = new URLSearchParams();
   if (params.page) qs.set("page", String(params.page));
   if (params.limit) qs.set("limit", String(params.limit));
+  if (params.dateFrom) qs.set("dateFrom", params.dateFrom);
+  if (params.dateTo) qs.set("dateTo", params.dateTo);
   const { data } = await apiClient.get<any>(`/admin/referrals?${qs}`);
   return data.data;
 }
+
 
 export async function createReferralCode(payload: { code: string; description?: string }) {
   const { data } = await apiClient.post<{ data: any }>("/admin/referrals", payload);
@@ -494,9 +509,8 @@ export async function getPresignedUrl(key: string) {
 export async function uploadSettlementProof(file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  const { data } = await apiClient.post<{ data: { url: string } }>("/storage/settlement-proof", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await apiClient.post<{ data: { url: string } }>("/storage/settlement-proof", formData);
+
   return data.data.url;
 }
 

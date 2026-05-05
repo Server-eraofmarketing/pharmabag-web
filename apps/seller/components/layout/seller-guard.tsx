@@ -84,7 +84,7 @@ export function SellerGuard({ children }: { children: React.ReactNode }) {
 
     const interval = setInterval(() => {
       void queryClient.invalidateQueries({ queryKey: ["seller", "me"] });
-    }, 5000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, [currentStatus, queryClient]);

@@ -52,6 +52,7 @@ export default function AdminDashboardPage() {
     blockedUsers: d?.blockedUsers ?? 0,
     referralCount: d?.referralCount ?? 0,
     referralRevenue: d?.referralRevenue ?? 0,
+    pendingProductRequests: d?.pendingProductRequests ?? 0,
   };
   const recentOrders = d?.recentOrders ?? [];
 
@@ -67,8 +68,8 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Critical alerts */}
-      {(stats.pendingOrders > 0 || stats.openTickets > 0) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+      {(stats.pendingOrders > 0 || stats.openTickets > 0 || stats.pendingProductRequests > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
           {stats.pendingOrders > 0 && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               className="flex items-center justify-between p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
@@ -93,6 +94,19 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
               <Link href="/tickets"><Button size="xs" variant="danger">Review</Button></Link>
+            </motion.div>
+          )}
+          {stats.pendingProductRequests > 0 && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+              className="flex items-center justify-between p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-3">
+                <Package className="h-5 w-5 text-blue-500 flex-shrink-0" aria-hidden />
+                <div>
+                  <p className="text-sm font-semibold text-blue-700 dark:text-blue-400">{stats.pendingProductRequests} Product Requests</p>
+                  <p className="text-xs text-blue-500">Sellers requesting new items</p>
+                </div>
+              </div>
+              <Link href="/product-requests"><Button size="xs" variant="primary">Review</Button></Link>
             </motion.div>
           )}
         </div>

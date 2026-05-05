@@ -8,12 +8,25 @@ import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { useReferralCodes, useCreateReferralCode, useDeleteReferralCode } from "@/hooks/useAdmin";
 
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { DateRange } from "react-day-picker";
+import { subDays } from "date-fns";
+
 export default function ReferralsPage() {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
-  const { data: referrals, isLoading } = useReferralCodes();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: subDays(new Date(), 30),
+    to: new Date(),
+  });
+
+  const { data: referrals, isLoading } = useReferralCodes({
+    dateFrom: dateRange?.from?.toISOString(),
+    dateTo: dateRange?.to?.toISOString(),
+  });
+
   const createCode = useCreateReferralCode();
   const deleteCode = useDeleteReferralCode();
 
@@ -140,9 +153,8 @@ export default function ReferralsPage() {
               className="pl-12 h-12 rounded-2xl border-white/20 bg-white/5 backdrop-blur-sm focus:ring-primary/20 transition-all font-medium" 
             />
           </div>
-          <Button variant="outline" className="h-12 rounded-2xl px-5 border-white/20 bg-white/5 hover:bg-white/10 transition-all font-semibold">
-            <Filter className="h-4 w-4 mr-2 opacity-70" /> Analytics Range
-          </Button>
+          <DateRangePicker value={dateRange} onChange={setDateRange} align="end" />
+
         </div>
 
         {/* Main Records Table */}

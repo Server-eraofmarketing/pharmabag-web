@@ -2,15 +2,20 @@
 
 import { useAuth } from '@pharmabag/api-client';
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Loader2 } from 'lucide-react';
+import { Shield, Loader2, CheckCircle2 } from 'lucide-react';
+import { useToast } from '@/components/shared/Toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, isAuthenticated, isLoading, refresh } = useAuth();
+  const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const [showRedirect, setShowRedirect] = useState(false);
+  const prevStatusRef = useRef<string | undefined>(user?.status || user?.verificationStatus);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -38,14 +43,34 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   // Status Polling — poll every 10s while buyer is pending so approval reflects automatically
   useEffect(() => {
-    const isPending = user?.status === 'PENDING' || user?.verificationStatus === 'PENDING';
-    if (!isPending) return;
+    if (!isAuthenticated || !user) return;
+
+    const bp = user.buyerProfile as any;
+    const isApproved = user.status === 'APPROVED' || user.verificationStatus === 'VERIFIED' || bp?.verificationStatus === 'VERIFIED';
+    const isRejected = user.status === 'REJECTED' || user.verificationStatus === 'REJECTED' || bp?.verificationStatus === 'REJECTED';
+    
+    // Notify if status changed to approved
+    const currentStatus = user.status || user.verificationStatus || bp?.verificationStatus;
+    if (isApproved && prevStatusRef.current !== currentStatus && (prevStatusRef.current === 'PENDING' || !prevStatusRef.current)) {
+      toast('Your account has been verified! You can now start ordering.', 'success');
+      // Force refresh profile data
+      queryClient.invalidateQueries({ queryKey: ['buyerProfile'] });
+      
+      // If on onboarding, redirect to products
+      if (pathname === '/onboarding') {
+        router.push('/products');
+      }
+    }
+    prevStatusRef.current = currentStatus;
+
+    if (isApproved || isRejected) return;
 
     const interval = setInterval(() => {
+      console.log('[AuthGuard] Polling status...');
       refresh();
     }, 10000);
     return () => clearInterval(interval);
-  }, [user?.status, user?.verificationStatus, refresh]);
+  }, [user, isAuthenticated, refresh, toast, pathname, router]);
 
   if (isLoading) {
     return (

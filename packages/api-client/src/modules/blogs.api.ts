@@ -83,8 +83,7 @@ export async function createBlogCategory(categoryData: any): Promise<any> {
 export async function uploadBlogImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
-  const { data } = await api.post('/storage/blog-image', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const { data } = await api.post('/storage/blog-image', formData);
+
   return data.data.url;
 }

@@ -20,6 +20,7 @@ import {
   getRevenueChart, getOrdersChart, getTopProducts, getTopSellers, getPresignedUrl,
   getMarketingProducts, addMarketingProduct, removeMarketingProduct, uploadSettlementProof,
   getAdminCustomOrders, updateCustomOrderStatus, deleteCustomOrder,
+  getProductRequests, updateProductRequestStatus,
 } from "@/api/admin.api";
 import { useAdminAuth } from "@/store";
 
@@ -48,7 +49,7 @@ export function useVerifyAdminOtp() {
 // ─── Data Hooks ──────────────────────────────────────
 
 export function useAdminMe() {
-  const { setUser } = useAdminAuth();
+  const { setUser, isAuth } = useAdminAuth();
   return useQuery({
     queryKey: ["admin", "me"],
     queryFn: async () => {
@@ -57,6 +58,7 @@ export function useAdminMe() {
       if (user) setUser(user);
       return user;
     },
+    enabled: isAuth,
     staleTime: 60_000,
   });
 }
@@ -526,5 +528,25 @@ export function useDeleteCustomOrder() {
   return useMutation({
     mutationFn: deleteCustomOrder,
     onSuccess: () => void qc.invalidateQueries({ queryKey: ["admin", "custom-orders"] }),
+  });
+}
+
+// ─── Product Requests ───────────────────────────────────
+export function useProductRequests(params: { page?: number; limit?: number; status?: string; search?: string; dateFrom?: string; dateTo?: string } = {}) {
+
+
+  return useQuery({ 
+    queryKey: ["admin", "product-requests", params], 
+    queryFn: () => getProductRequests(params), 
+    staleTime: 60_000, 
+    retry: 1 
+  });
+}
+
+export function useUpdateProductRequestStatus() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => updateProductRequestStatus(id, status),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ["admin", "product-requests"] }),
   });
 }

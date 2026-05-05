@@ -84,6 +84,8 @@ export interface PricingOutput {
   perPtrWithGst: number;
   /** Items to pay for (buy quantity — NOT buy+get) */
   itemsToPayFor: number;
+  /** Total units received (buy + get for same product bonus, else buy) */
+  totalUnits: number;
   /** Final user buy price = perPtrWithGst × itemsToPayFor */
   finalUserBuy: number;
   /** Final order value = same as finalUserBuy */
@@ -180,6 +182,11 @@ export function calculatePricing(
   const finalUserBuy = round2(perPtrWithGst * itemsToPayFor);
   const finalOrderValue = finalUserBuy;
 
+  // totalUnits calculation
+  const totalUnits = (type === 'same_product_bonus' || type === 'ptr_discount_and_same_product_bonus')
+    ? (buy + get)
+    : buy;
+
   return {
     mrp,
     gstPercent,
@@ -191,6 +198,7 @@ export function calculatePricing(
     gstValue,
     perPtrWithGst,
     itemsToPayFor,
+    totalUnits,
     finalUserBuy,
     finalOrderValue,
     buy,
@@ -199,6 +207,7 @@ export function calculatePricing(
     discountType: type,
   };
 }
+
 
 // ─── Helpers ────────────────────────────────────────
 

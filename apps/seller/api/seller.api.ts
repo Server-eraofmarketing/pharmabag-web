@@ -147,9 +147,8 @@ export async function rejectSellerOrder(orderId: string, reason: string) {
 }
 
 export async function uploadOrderInvoice(orderId: string, formData: FormData) {
-  const { data } = await apiClient.post<any>(`/orders/${orderId}/invoice`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  const { data } = await apiClient.post<any>(`/orders/${orderId}/invoice`, formData);
+
   return data.data ?? data;
 }
 
@@ -278,7 +277,7 @@ export async function getSellerFullProfile() {
 
 // ─── Product Requests ─────────────────────────────────
 export async function getProductRequests() {
-  const { data } = await apiClient.get<any>("/products/requests");
+  const { data } = await apiClient.get<any>("/products/my-requests");
   return data.data ?? data;
 }
 
@@ -411,9 +410,8 @@ export async function verifyGstOrPan(type: 'GST' | 'PAN', value: string) {
  * Upload KYC document for buyer profile (licence, bank statement, etc.)
  */
 export async function uploadKycDocument(formData: FormData) {
-  const { data } = await apiClient.post<any>('/storage/kyc', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const { data } = await apiClient.post<any>('/storage/kyc', formData);
+
   return data.data ?? data;
 }
 
@@ -421,9 +419,8 @@ export async function uploadKycDocument(formData: FormData) {
  * Upload product image to S3
  */
 export async function uploadProductImage(formData: FormData) {
-  const { data } = await apiClient.post<any>('/storage/product-image', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const { data } = await apiClient.post<any>('/storage/product-image', formData);
+
   return data.data ?? data;
 }
 
@@ -431,9 +428,8 @@ export async function uploadProductImage(formData: FormData) {
  * Upload drug license document during seller onboarding
  */
 export async function uploadDrugLicense(formData: FormData) {
-  const { data } = await apiClient.post<any>('/storage/drug-license', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const { data } = await apiClient.post<any>('/storage/drug-license', formData);
+
   return data.data ?? data;
 }
 

@@ -196,8 +196,10 @@ export default function BuyerOnboardingPage() {
       toast.success("Buyer onboarded successfully!");
       router.push("/buyers");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to onboard buyer");
+      const msg = error?.response?.data?.message || "Failed to onboard buyer";
+      toast.error(Array.isArray(msg) ? msg.join(", ") : msg);
     } finally {
+
       setLoading(false);
     }
   };
@@ -381,6 +383,24 @@ export default function BuyerOnboardingPage() {
                     />
                   </div>
                 </div>
+
+
+
+
+                {/* Referral Code */}
+                <div className="space-y-4">
+                  <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">Referral Information (Optional)</h2>
+                  <Input
+                    label="Invite / Referral Code"
+                    name="inviteCode"
+                    value={formData.inviteCode}
+                    onChange={handleChange}
+                    placeholder="e.g. PHARMABAG100"
+                    className="uppercase"
+                  />
+                  <p className="text-xs text-muted-foreground">If the buyer was referred by someone, enter the referral code here.</p>
+                </div>
+
 
                 {/* Action Button */}
                 <div className="pt-6 border-t border-border/50 flex justify-end">

@@ -21,10 +21,10 @@ interface Props {
 
 const DISCOUNT_OPTIONS: { label: string; value: string }[] = [
   { label: "PTR Discount Only", value: "ptr_discount" },
-  { label: "Same Product Bonus (Buy X Get Y)", value: "same_product_bonus" },
   { label: "PTR Discount + Same Product Bonus", value: "ptr_discount_and_same_product_bonus" },
-  { label: "Different Product Bonus", value: "different_product_bonus" },
   { label: "PTR Discount + Different Product Bonus", value: "ptr_discount_and_different_product_bonus" },
+  { label: "Same Product Bonus (Buy X Get Y)", value: "same_product_bonus" },
+  { label: "Different Product Bonus", value: "different_product_bonus" },
   { label: "Special / Fixed Price", value: "special_price" },
 ];
 
@@ -168,7 +168,7 @@ export function DiscountSelector({ value, onChange, mrp, gstPercent, error }: Pr
             )}
             <div className="flex justify-between col-span-2 sm:col-span-3 border-t border-primary/10 pt-1 mt-1">
               <span className="text-muted-foreground font-medium">Buyer Pays:</span>
-              <span className="font-bold text-primary">{formatCurrency(pricing.finalUserBuy)} (for {pricing.itemsToPayFor} units)</span>
+              <span className="font-bold text-primary">{formatCurrency(pricing.finalUserBuy)} (for {pricing.totalUnits} units)</span>
             </div>
           </div>
         </div>

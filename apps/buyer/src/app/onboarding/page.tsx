@@ -261,13 +261,23 @@ export default function OnboardingPage() {
     // Try create first (backend converts empty stub to real profile), fallback to update
     createProfile.mutate(payload, {
       onSuccess,
-      onError: () => {
+      onError: (err: any) => {
         // If create fails (profile already has data), try update
+        const createErrorMsg = err?.response?.data?.message || err?.message;
+        if (createErrorMsg === 'Invalid referral code') {
+          toast('Invalid referral code. Please check and try again.', 'error');
+          return;
+        }
+
         updateProfile.mutate(payload as any, {
           onSuccess,
-          onError: () => toast('Failed to submit profile. Please try again.', 'error'),
+          onError: (updateErr: any) => {
+            const msg = updateErr?.response?.data?.message || updateErr?.message || 'Failed to submit profile. Please try again.';
+            toast(msg, 'error');
+          },
         });
       },
+
     });
   };
 
@@ -277,7 +287,8 @@ export default function OnboardingPage() {
   ];
 
   // Check if buyer is already approved — redirect to products
-  const isApproved = user?.status === 'APPROVED' || user?.verificationStatus === 'VERIFIED';
+  const bp = user?.buyerProfile as any;
+  const isApproved = user?.status === 'APPROVED' || user?.verificationStatus === 'VERIFIED' || bp?.verificationStatus === 'VERIFIED';
   if (isApproved) {
     router.replace('/products');
     return null;
@@ -287,7 +298,6 @@ export default function OnboardingPage() {
   // Backend auto-creates an empty stub at registration (legalName is empty)
   // A completed profile has legalName filled + verificationStatus is PENDING or VERIFIED
   const profile = existingProfile as any;
-  const bp = user?.buyerProfile as any;
   const hasCompletedOnboarding = !isProfileLoading && (
     (profile?.legalName && profile.legalName.trim() !== '') ||
     (bp?.legalName && bp.legalName.trim() !== '') ||

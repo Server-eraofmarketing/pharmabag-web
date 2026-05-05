@@ -457,16 +457,16 @@ export default function SellerOnboardingPage() {
                    <div className="p-2 bg-indigo-50 rounded-lg"><FileText className="w-5 h-5 text-indigo-600" /></div>
                    <h2 className="text-xl font-bold text-slate-900">Drug License</h2>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="License Number 1 (Form 20B)" value={formData.drugLicenseNumber} onChange={(e) => updateField("drugLicenseNumber", e.target.value.toUpperCase())} placeholder="e.g. DL-MH-12345" className="h-14 rounded-2xl uppercase" error={errors.drugLicenseNumber} />
                   <ExpiryPicker label="Expiry Date 1" value={formData.drugLicenseExpiry} onChange={(val) => updateField("drugLicenseExpiry", val)} error={errors.drugLicenseExpiry} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="License Number 2 (Form 21B)" value={formData.drugLicenseNumber2} onChange={(e) => updateField("drugLicenseNumber2", e.target.value.toUpperCase())} placeholder="e.g. DL-MH-12346" className="h-14 rounded-2xl uppercase" error={errors.drugLicenseNumber2} />
                   <ExpiryPicker label="Expiry Date 2" value={formData.drugLicenseExpiry2} onChange={(val) => updateField("drugLicenseExpiry2", val)} error={errors.drugLicenseExpiry2} />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-bold text-slate-700 mb-2">Upload License 1</label>
                     <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => handleFileUpload(e, "drugLicenseUrl")} className="hidden" />
@@ -504,7 +504,7 @@ export default function SellerOnboardingPage() {
                    <h2 className="text-xl font-bold text-slate-900">Registered Address</h2>
                 </div>
                 <Input label="Street Address" value={formData.address} onChange={(e) => updateField("address", e.target.value)} placeholder="Building No, Street, Landmark" className="h-14 rounded-2xl" error={errors.address} />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="City" value={formData.city} onChange={(e) => updateField("city", e.target.value)} placeholder="City" className="h-14 rounded-2xl" error={errors.city} />
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700">State</label>
@@ -524,7 +524,7 @@ export default function SellerOnboardingPage() {
                    <h2 className="text-xl font-bold text-slate-900">Bank Details</h2>
                 </div>
                 <Input label="Account Holder Name" value={formData.bankAccountHolder} onChange={(e) => updateField("bankAccountHolder", e.target.value)} placeholder="As per bank records" className="h-14 rounded-2xl" error={errors.bankAccountHolder} />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="Account Number" value={formData.bankAccountNumber} onChange={(e) => updateField("bankAccountNumber", e.target.value)} placeholder="000000000000" className="h-14 rounded-2xl" error={errors.bankAccountNumber} />
                   <Input label="IFSC Code" value={formData.bankIfsc} onChange={(e) => updateField("bankIfsc", e.target.value.toUpperCase())} placeholder="HDFC0001234" className="h-14 rounded-2xl uppercase" error={errors.bankIfsc} />
                 </div>
