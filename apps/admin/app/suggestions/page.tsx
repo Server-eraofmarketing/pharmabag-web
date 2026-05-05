@@ -85,8 +85,17 @@ export default function MasterCatalogPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      await importCsv.mutateAsync(file);
-      toast.success("Master catalog imported successfully");
+      const res = await importCsv.mutateAsync(file);
+      if (res?.success) {
+        const errorCount = res.errors?.length || 0;
+        if (errorCount > 0) {
+          toast.success(`Imported ${res.recordsProcessed} records with ${errorCount} errors.`, { duration: 6000 });
+        } else {
+          toast.success(`Master catalog imported successfully (${res.recordsProcessed} records)`);
+        }
+      } else {
+        toast.error(res?.errors?.[0] || "Import failed");
+      }
     } catch (err: any) {
       toast.error(err?.response?.data?.message || "Failed to import CSV");
     }

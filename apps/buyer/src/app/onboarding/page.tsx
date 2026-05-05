@@ -289,14 +289,8 @@ export default function OnboardingPage() {
   // Check if buyer is already approved — redirect to products
   const bp = user?.buyerProfile as any;
   const isApproved = user?.status === 'APPROVED' || user?.verificationStatus === 'VERIFIED' || bp?.verificationStatus === 'VERIFIED';
-  if (isApproved) {
-    router.replace('/products');
-    return null;
-  }
-
+  
   // Check if buyer has actually completed the onboarding form (not just an empty stub)
-  // Backend auto-creates an empty stub at registration (legalName is empty)
-  // A completed profile has legalName filled + verificationStatus is PENDING or VERIFIED
   const profile = existingProfile as any;
   const hasCompletedOnboarding = !isProfileLoading && (
     (profile?.legalName && profile.legalName.trim() !== '') ||
@@ -307,6 +301,21 @@ export default function OnboardingPage() {
     (bp?.verificationStatus === 'VERIFIED')
   );
   const isRejected = user?.status === 'REJECTED' || user?.verificationStatus === 'REJECTED' || profile?.verificationStatus === 'REJECTED';
+
+  // Auto-refresh status when pending to avoid manual refresh
+  useEffect(() => {
+    if (hasCompletedOnboarding && !isApproved && !isRejected) {
+      const interval = setInterval(() => {
+        refresh();
+      }, 15000); // Poll every 15 seconds
+      return () => clearInterval(interval);
+    }
+  }, [hasCompletedOnboarding, isApproved, isRejected, refresh]);
+
+  if (isApproved) {
+    router.replace('/products');
+    return null;
+  }
 
   if (hasCompletedOnboarding && !isRejected) {
     return (

@@ -368,9 +368,11 @@ export async function deleteSuggestion(id: string) {
 export async function importSuggestionsCsv(file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  const { data } = await apiClient.post<{ data: any }>("/admin/suggestions/import", formData);
+  const { data } = await apiClient.post<any>("/admin/suggestions/import", formData, {
+    timeout: 300_000, // 5 minutes for large files
+  });
 
-  return data.data;
+  return data;
 }
 
 // ─── Banners ─────────────────────────────────────────
