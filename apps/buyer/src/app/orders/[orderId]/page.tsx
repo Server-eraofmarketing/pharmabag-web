@@ -289,7 +289,7 @@ export default function OrderIdPage({ params }: { params: { orderId: string } })
                 </div>
                 <Timeline steps={steps} />
 
-                {['PLACED', 'ACCEPTED'].includes(normalizeStatus(status)) && (
+                {normalizeStatus(status) === 'ACCEPTED' && (
                   <div className="mt-8">
                     {!order.payments?.some((p: any) => p.proofUrl) ? (
                       <Link

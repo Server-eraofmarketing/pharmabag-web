@@ -119,14 +119,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Composition</p>
                         <p className="text-[14px] font-[700] text-gray-700 break-words">{displayProduct.chemicalComposition || 'N/A'}</p>
                       </div>
-                      <div>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Base MRP</p>
-                        <p className="text-[16px] font-black text-gray-900">₹{displayProduct.mrp?.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">GST Application</p>
-                        <p className="text-[14px] font-bold text-blue-600">{displayProduct.gstPercent || 12}% Included</p>
-                      </div>
+
                     </div>
 
                     <div className="p-4 rounded-2xl bg-gray-50/50 border border-gray-100 italic text-[13px] text-gray-500 leading-relaxed border-l-4 border-l-teal-500">
