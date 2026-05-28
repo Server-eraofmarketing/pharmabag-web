@@ -14,8 +14,8 @@ export function formatCurrency(
   const {
     locale = 'en-IN',
     currency = 'INR',
-    minimumFractionDigits = 0,
-    maximumFractionDigits = 0,
+    minimumFractionDigits = 2,
+    maximumFractionDigits = 2,
   } = options || {};
 
   return new Intl.NumberFormat(locale, {
